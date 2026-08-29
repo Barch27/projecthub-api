@@ -2,16 +2,23 @@ import { Router } from "express";
 
 import * as userController from "../controllers/user.controller.js"
 
+
+import { validate} from "../middleware/validate.middleware.js";
+
+import { createUserSchema, updateUserSchema } from "../validators/user.validator.js";
+
+
+
 const router = Router();
 
 
-router.post("/", userController.createUser);
+router.post("/", validate( createUserSchema ),userController.createUser);
 
 router.get("/", userController.getUsers);
 
 router.get("/:id", userController.getUserById);
 
-router.put("/:id", userController.updateUser);
+router.put("/:id", validate( updateUserSchema ),userController.updateUser);
 
 router.delete("/:id", userController.deleteUser);
 
