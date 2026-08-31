@@ -11,6 +11,13 @@ export const createUserSchema = z.object({
     email: z
       .email("Email format is invalid")
       .toLowerCase(),
+
+    password: z
+      .string()
+      .min(8, "password must contain at least 8 characters")
+      .regex(/[A-Z]/, "password must contain one uppercase letter")
+      .regex(/[a-z]/, "password must contain one lowercase letter")
+      .regex(/[0-9]/, "password must contain one number")
 });
 
 

@@ -38,3 +38,11 @@ export const deleteUser = (id) => {
     },
   });
 };
+
+export const findUserByEmail = async (email) => {
+  return await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+};
