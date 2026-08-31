@@ -12,14 +12,26 @@ import { createUserSchema, updateUserSchema } from "../validators/user.validator
 const router = Router();
 
 
-router.post("/", validate( createUserSchema ),userController.createUser);
+router.post("/", 
+    validate( createUserSchema ),
+    userController.createUser
+);
 
-router.get("/", userController.getUsers);
+router.get("/", 
+    userController.getUsers
+);
 
-router.get("/:id", userController.getUserById);
+router.get("/:id", 
+    userController.getUserById
+);
 
-router.put("/:id", validate( updateUserSchema ),userController.updateUser);
+router.put("/:id", 
+    validate( updateUserSchema ),
+    userController.updateUser
+);
 
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", 
+    userController.deleteUser
+);
 
 export default router;    

@@ -1,0 +1,5 @@
+import jwt from "jsonwebtoken";
+
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiZWxpeWFzMUBnbWFpbC5jb20iLCJpYXQiOjE3ODgxNzEyMjQsImV4cCI6MTc4ODE3MjEyNH0.8H3ptVm1sMZIK0tbBdFyLa7qf5pYpQmwbMoY8eqkFss";
+
+console.log(jwt.decode(token));
