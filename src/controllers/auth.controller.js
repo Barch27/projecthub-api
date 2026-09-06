@@ -1,14 +1,17 @@
 import * as authService from "../services/auth.service.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const login = async (req, res, next) => {
   try {
     const result = await authService.loginUser(req.body);
 
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      data: result,
-    });
+    res.status(200).json(
+     new ApiResponse(
+      200,
+      "Login Successfull",
+      result
+     )
+    );
   } catch (error) {
     next(error);
   }
@@ -20,11 +23,13 @@ export const refreshToken = async (req, res, next) => {
 
     const tokens = await authService.refreshUserToken(refreshToken);
 
-    res.status(200).json({
-      success: true,
-      message: "Access token refreshed",
-      data: tokens,
-    });
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        "Access token refreshed",
+        tokens
+      )
+    );
   } catch (error) {
     next(error);
   }
@@ -37,10 +42,12 @@ export const logout = async (req, res, next) => {
 
     await authService.logoutUser(refreshToken);
 
-    res.status(200).json({
-      success: true,
-      message: "Logout successful",
-    });
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        "Logout successful"
+      )
+    );
   } catch (error) {
     next(error);
   }
