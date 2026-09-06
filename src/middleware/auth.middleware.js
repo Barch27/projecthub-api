@@ -5,7 +5,7 @@ import { verifyAccessToken } from "../utils/jwt.js";
 export const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startWith("Bearer ")) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new ApiError(401, "Access token required");
   }
 
