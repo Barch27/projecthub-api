@@ -28,8 +28,8 @@ router.get("/:id",
 );
 
 router.put("/:id", 
-    validate( updateUserSchema ),
     authenticate,
+    validate( updateUserSchema ),
     userController.updateUser
 );
 

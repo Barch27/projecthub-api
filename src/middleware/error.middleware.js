@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 export const errorHandler = (err, req, res, next) => {
   console.error("ERROR:", err);
@@ -10,6 +11,9 @@ export const errorHandler = (err, req, res, next) => {
       message: err.message,
     });
   }
+
+  // JWT errors — expired or invalid token → 401
+
 
   // Prisma unique constraint
   if (

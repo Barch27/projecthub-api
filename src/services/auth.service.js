@@ -49,6 +49,12 @@ export const loginUser = async ({ email, password }) => {
   };
 };
 
+export const logoutUser = async (refreshToken) => {
+  const decoded = verifyRefreshToken(refreshToken);
+
+  await redis.del(`refresh:${decoded.id}`);
+};
+
 export const refreshUserToken = async (refreshToken) => {
   const decoded = verifyRefreshToken(refreshToken);
 
