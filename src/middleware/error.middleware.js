@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
 import logger from "../utils/logger.js";
+import { request } from "http";
+import { requestId } from "./requestId.middleware.js";
 
 export const errorHandler = (
   err,
@@ -28,11 +30,15 @@ export const errorHandler = (
     err instanceof Prisma.PrismaClientKnownRequestError &&
     err.code === "P2002"
   ) {
-    statusCode = 404;
-    message = "Resource not found";
+    statusCode = 409;
+
+    const field = err.meta?.target?.[0];
+
+    message = `${field} already exists`;
   }
 
   logger.error({
+    requestId: req.requestId,
     method: req.method,
     url: req.originalUrl,
     statusCode,
@@ -42,6 +48,7 @@ export const errorHandler = (
 
   res.status(statusCode).json({
     success: false,
+    requestId: req.requestId,
     message,
     errors,
     ...(process.env.NODE_ENV !== "production" && {

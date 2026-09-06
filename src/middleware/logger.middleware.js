@@ -8,10 +8,12 @@ export const requestLogger = (req, res, next) => {
         const duration = Date.now() - start;
 
         logger.info({
+            requestId: req.requestId,
             method: req.method,
             url: req.originalUrl,
             statusCode: res.statusCode,
-            responseTime: `${duration}ms`
+            responseTime: `${duration}ms`,
+            ip: req.ip,
         });
     });
 
