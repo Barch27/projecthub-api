@@ -1,34 +1,43 @@
 import { Prisma } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import { ZodError } from "zod";
 
-export const errorHandler = (err, req, res, next) => {
-  console.error("ERROR:", err);
+export const errorHandler = (
+  err,
+  req,
+  res,
+  next
+) => {
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal Server Error";
+  let errors = [];
 
-  // Custom API Errors
-  if (err.statusCode) {
-    return res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-    });
+  // Zod Validation Error
+  if (err instanceof ZodError) {
+    statusCode = 400; 
+    message = "Validation failed";
+
+    errors = err.issues.map((issue) => ({
+      field: issue.path.join("."),
+      message: issue.message,
+    }));
   }
 
-  // JWT errors — expired or invalid token → 401
-
-
-  // Prisma unique constraint
-  if (
+  // Prisma Unique Constraint
+  else if (
     err instanceof Prisma.PrismaClientKnownRequestError &&
     err.code === "P2002"
   ) {
-    return res.status(409).json({
-      success: false,
-      message: "Email already exists.",
-    });
+    statusCode = 404;
+    message = "Resource not found";
   }
 
-  // Unknown error
-  res.status(500).json({
+
+  res.status(statusCode).json({
     success: false,
-    message: "Internal Server Error",
+    message,
+    errors,
+    ...(process.env.NODE_ENV !== "production" && {
+      stack: err.stack,
+    }),
   });
 };

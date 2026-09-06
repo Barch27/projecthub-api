@@ -10,13 +10,14 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 
-app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.json({
     message: "ProjectHub API Running",
   });
 });
+
+app.use(errorHandler);
 
 const PORT = 4000
 
