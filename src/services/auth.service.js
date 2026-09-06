@@ -8,11 +8,17 @@ import {
   verifyRefreshToken,
 } from "../utils/jwt.js";
 import * as userRepository from "../repositories/user.repository.js";
+import logger from "../utils/logger.js"
 
 export const loginUser = async ({ email, password }) => {
   const user = await userRepository.findUserByEmail(email);
 
   if (!user) {
+    logger.warn({
+      event: "LOGIN_FAILED",
+      email,
+      reason: "User not found",
+    });
     throw new ApiError(401, "Invalid email or password");
   }
 
@@ -22,6 +28,13 @@ export const loginUser = async ({ email, password }) => {
   );
 
   if (!passwordMatches) {
+    logger.warn({
+      event: "LOGIN_FAILED",
+      email,
+      userId: user.id,
+      reason: "Incorrect password",
+    });
+
     throw new ApiError(401, "Invalid email or password");
   }
 
@@ -35,6 +48,12 @@ export const loginUser = async ({ email, password }) => {
       EX: 60 * 60 * 24 * 7,
     }
   );
+
+  logger.info({
+    event: "USER_LOGIN",
+    userId: user.id,
+    email: user.email,
+  });
 
   return {
     accessToken,
@@ -53,6 +72,11 @@ export const logoutUser = async (refreshToken) => {
   const decoded = verifyRefreshToken(refreshToken);
 
   await redis.del(`refresh:${decoded.id}`);
+
+  logger.info({
+    event: "USER_LOGOUT",
+    userId: decoded.id,
+  });
 };
 
 export const refreshUserToken = async (refreshToken) => {
@@ -63,6 +87,11 @@ export const refreshUserToken = async (refreshToken) => {
   );
 
   if (!storedToken || storedToken !== refreshToken) {
+    logger.warn({
+      event: "REFRESH_TOKEN_FAILED",
+      userId: decoded.id,
+    });
+
     throw new ApiError(401, "Invalid refresh token");
   }
 
@@ -82,6 +111,11 @@ export const refreshUserToken = async (refreshToken) => {
       EX: 60 * 60 * 24 * 7,
     }
   );
+
+  logger.info({
+    event: "REFRESH_TOKEN_ROTATED",
+    userId: user.id,
+  });
 
   return {
     accessToken: newAccessToken,

@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
+import logger from "../utils/logger.js";
 
 export const errorHandler = (
   err,
@@ -31,6 +32,13 @@ export const errorHandler = (
     message = "Resource not found";
   }
 
+  logger.error({
+    method: req.method,
+    url: req.originalUrl,
+    statusCode,
+    message,
+    stack: err.stack,
+  });
 
   res.status(statusCode).json({
     success: false,
