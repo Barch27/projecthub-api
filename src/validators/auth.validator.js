@@ -9,3 +9,7 @@ export const loginSchema = z.object({
         .string()
         .min(4, "password is required"),
 })
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string(),
+});

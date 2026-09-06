@@ -1,21 +1,18 @@
-import jwt from "jsonwebtoken";
-
 import { ApiError } from "../utils/ApiError.js";
+import { verifyAccessToken } from "../utils/jwt.js";
+
 
 export const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startWith("Bearer ")) {
     throw new ApiError(401, "Access token required");
   }
 
   const token = authHeader.replace("Bearer ", "");
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+    const decoded = verifyAccessToken(token);
 
     req.user = decoded;
 

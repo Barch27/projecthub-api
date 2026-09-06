@@ -14,7 +14,6 @@ const router = Router();
 
 router.post("/", 
     validate( createUserSchema ),
-    authenticate,
     userController.createUser
 );
 
