@@ -1,0 +1,13 @@
+node_modules
+
+.git
+
+.env
+
+npm-debug.log
+
+Dockerfile.old
+
+coverage
+
+dist

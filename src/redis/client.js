@@ -4,6 +4,12 @@ import logger from "../utils/logger.js";
 
 const redis = createClient({
   url: env.REDIS_URL,
+
+  socket: {
+    connectTimeout: 5000,
+
+    reconnectStrategy: false,
+  },
 });
 
 redis.on("connect", () => {
@@ -21,7 +27,10 @@ redis.on("ready", () => {
 redis.on("error", (error) => {
   logger.error({
     event: "REDIS_ERROR",
-    message: error.message,
+    name: error.name,
+    message: error.message || "Unable to connect to Redis.",
+    code: error.code,
+    stack: error.stack,
   });
 });
 
@@ -31,6 +40,25 @@ redis.on("end", () => {
   });
 });
 
-await redis.connect();
+export const connectRedis = async () => {
+  if (redis.isOpen) return;
+
+  try {
+    await redis.connect();
+
+    logger.info({
+      event: "REDIS_CONNECTED",
+    });
+  } catch (error) {
+    logger.fatal({
+      event: "REDIS_CONNECTION_FAILED",
+      message: error.message || "Unable to connect to Redis server.",
+      code: error.code,
+    });
+
+    throw error;
+  }
+  
+};
 
 export default redis;

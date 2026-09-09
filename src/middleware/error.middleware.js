@@ -1,8 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
 import logger from "../utils/logger.js";
-import { request } from "http";
-import { requestId } from "./requestId.middleware.js";
 
 export const errorHandler = (
   err,
