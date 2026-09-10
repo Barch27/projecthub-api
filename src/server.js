@@ -17,6 +17,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       logger.info({
         event: "SERVER_STARTED",
+        message: "Hot reload works!",
         port: PORT,
         environment: env.NODE_ENV,
       });
